@@ -1,65 +1,46 @@
+'use client'
 import Image from "next/image";
-
+import Navbar from "./components/navabar";
+import Button from "./components/button"
+import Input from "./components/input";
+import { useEffect, useState } from "react";
 export default function Home() {
+  const [texto, settexto] = useState('')
+  const [messagens, setmessagens] = useState()
+  
+  const server = async () => {
+    const intents = {
+      portfolio: [
+        "portfólio",
+        "portfolio",
+        "projetos",
+        "trabalhos",
+        "github",
+        "ver projetos"
+      ],
+      contato: [
+        "contato",
+        "falar com você",
+        "email",
+        "whatsapp"
+      ]
+    }
+
+    
+  }
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+   <div className="h-screen flex flex-col">
+      <Navbar></Navbar>
+      <div className=" flex flex-1 justify-center items-center sm:mt-80 mt-60 md:mt-60  ">
+          <p className="text-white text-center sm:text-5xl text-4xl font-semibold mx-2">Seja bem vindo!! <span className=" block mt-2 text-blue-400 sm: text-4xl">pequeno gafanhoto</span></p>
+      </div>
+      <div className="flex-1 overflow-y-auto p-4 pb-24">
+
+      </div>
+      <div className="sm:-space-x-10 fhd:-space-x-24 lg:-space-x-80 fixed sm:mb-15 mb-5 flex justify-around items-center bottom-0 w-full ">
+        <Input value={texto} onChange={(e) => settexto(e.target.value)}></Input>
+        <Button click={server} ></Button>
+      </div>
+   </div>
+  )
 }
