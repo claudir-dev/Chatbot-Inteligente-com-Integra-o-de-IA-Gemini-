@@ -1,25 +1,21 @@
 'use client'
 import Image from "next/image"
 
-interface ButtonProps {
-  click: () => void
-  
-}
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
-export default function Button({ click }: ButtonProps) {
+export default function Button({ children, ...props}: ButtonProps) {
   return (
     <button
-      onClick={click}
-      className="max-w-20 flex-none "
-
+    {...props}
+      className="max-w-20 flex-none hover:scale-120 transition-all cursor-pointer "
     >
       <Image
         src="/enviar.png"
         alt="Ícone de enviar"
         width={30}
-        height={48}
-        className=""
+        height={50}  
       />
+      {children}
     </button>
   )
 }

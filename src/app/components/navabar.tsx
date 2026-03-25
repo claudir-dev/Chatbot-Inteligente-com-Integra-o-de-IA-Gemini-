@@ -8,7 +8,7 @@ export default function navbar () {
                 <Image src='/icone.png' width={100} height={50} alt="Icone de robó"></Image>
             </div>
             <div className="">
-                <p className="italic font-semibold">Assistente Virtual</p>
+                <p className="italic font-semibold text-2xl">Assistente Virtual</p>
             </div>
         </div>
     )

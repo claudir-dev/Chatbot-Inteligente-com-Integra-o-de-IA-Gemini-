@@ -3,12 +3,19 @@ import Image from "next/image";
 import Navbar from "./components/navabar";
 import Button from "./components/button"
 import Input from "./components/input";
+import CardErro from "./components/card_error";
 import { useEffect, useState } from "react";
 export default function Home() {
   const [texto, settexto] = useState('')
   const [messagens, setmessagens] = useState()
+  const [desabilita, setdesabilita] = useState(false)
+  const [invalido, setinvalido] = useState(false)
   
-  const server = async () => {
+  const server = async (e? : React.BaseSyntheticEvent) => {
+    if(e) {
+      e.preventDefault()
+    }
+
     const intents = {
       portfolio: [
         "portfólio",
@@ -26,20 +33,60 @@ export default function Home() {
       ]
     }
 
+    function DetectarIntent(texto: string) {
+      const normaliza = texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+      for (const intent in intents) {
+        const key = intent as keyof typeof intents
+        for (const palavra of intents[key]) {
+          if(normaliza.includes(palavra)) {
+            return intent
+          }
+        }
+      }
+      return null
+    }
     
+    const exist = DetectarIntent(texto)
+
+    if(exist) {
+      alert()
+    } else {
+      setdesabilita(true)
+      try {
+        const req = await fetch('http://localhost:3002/api/google', {
+          method: 'POST',
+          headers: {
+            'Content-type' : 'application/json'
+          },
+          body: JSON.stringify({texto})
+        })
+
+        const response = await req.json()
+        console.log(response)
+      } catch (error) {
+        console.log('Erro ao chama a API do gemini')
+        setTimeout(() => {
+          setinvalido(true)
+        },6000)
+        setinvalido(false)
+      } finally {
+        setdesabilita(false)
+      }  
+    } 
   }
   return (
    <div className="h-screen flex flex-col">
       <Navbar></Navbar>
-      <div className=" flex flex-1 justify-center items-center sm:mt-80 mt-60 md:mt-60  ">
+      <CardErro></CardErro>
+      <div className=" flex flex-1 justify-center items-center sm:mt-80 mt-60 md:mt-60 z-0 relative ">
           <p className="text-white text-center sm:text-5xl text-4xl font-semibold mx-2">Seja bem vindo!! <span className=" block mt-2 text-blue-400 sm: text-4xl">pequeno gafanhoto</span></p>
       </div>
-      <div className="flex-1 overflow-y-auto p-4 pb-24">
+      <div className="flex-1 overflow-y-auto z-0 p-4 pb-24">
 
       </div>
-      <div className="sm:-space-x-10 fhd:-space-x-24 lg:-space-x-80 fixed sm:mb-15 mb-5 flex justify-around items-center bottom-0 w-full ">
+      <div className="sm:-space-x-10 -space-x-4 lg:-space-x-160 fixed sm:mb-15 mb-5 flex justify-around items-center bottom-0 w-full ">
         <Input value={texto} onChange={(e) => settexto(e.target.value)}></Input>
-        <Button click={server} ></Button>
+        <Button disabled={desabilita} onClick={server} ></Button>
       </div>
    </div>
   )
