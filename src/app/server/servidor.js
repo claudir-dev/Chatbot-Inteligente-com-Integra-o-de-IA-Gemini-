@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import { GoogleGenerativeAI } from '@google/generative-ai' // Certifique-se que instalou este!
 import dotenv from 'dotenv'
+import { error } from 'console'
 
 dotenv.config()
 
@@ -28,7 +29,7 @@ app.post('/api/google', async (req, res) => {
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" })
 
         if (!model) {
-            throw new Error("Falha ao inicializar o modelo Gemini.");
+            return res.status(500).json({error: "Falha ao inicializar o modelo Gemini."});
         }
 
         const result = await model.generateContent(texto)

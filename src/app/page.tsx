@@ -4,8 +4,6 @@ import Navbar from "./components/navabar";
 import Button from "./components/button"
 import Input from "./components/input";
 import CardErro from "./components/card_error";
-import CardUser from "./components/card_user";
-import CardRoot from "./components/card_root";
 import { useEffect, useState } from "react";
 export default function Home() {
 
@@ -14,10 +12,12 @@ export default function Home() {
   const [desabilita, setdesabilita] = useState(false)
   const [invalido, setinvalido] = useState(false)
   const [rootMsg, setrootMsg] = useState('')
+  const [animacao, setanimacao] = useState(false)
+  const [img, setimg] = useState(false)
   const [user, setuser] = useState<Mensagem[]>([])
 
     type Mensagem = {
-      texto:string, tipo: 'user' | 'rot'
+      texto:string, tipo: 'user' | 'bot'
     }
   
   const server = async (e? : React.BaseSyntheticEvent) => {
@@ -74,38 +74,47 @@ export default function Home() {
     const exist = DetectarIntent(texto)
 
     if(exist) {
-      alert()
+      alert('ola')
     } else {
-      setdesabilita(true)
       try {
+        setimg(true)
+        setanimacao(true)
+        setdesabilita(true)
         const req = await fetch('http://localhost:3002/api/google', {
           method: 'POST',
           headers: {
             'Content-type' : 'application/json'
           },
-          body: JSON.stringify({})
+          body: JSON.stringify({texto})
         })
 
         const response = await req.json()
         console.log(response)
-        setrootMsg(response.text)
+
+        if(!req.ok) {
+          setmessagens('Erro interno no servidor! Estamos verificando...')
+          setinvalido(true)
+          setTimeout(() => {setinvalido(false)},6000)
+        }
+
 
         setuser((prev) => [
           ...prev, {
-            texto: rootMsg, tipo: 'rot'
+            texto: response.text, tipo: 'bot'
           }
         ])
       } catch (error) {
-        console.log('Erro ao chama a API do gemini')
+        console.log('Erro ao chama a API do gemini', error)
 
         setTimeout(() => {
-          setmessagens('Erro interno no servidor')
+          setmessagens('Erro interno na requisição para api.')
           setinvalido(true)
         },6000)
         setinvalido(false)
 
       } finally {
         setdesabilita(false)
+        setanimacao(false)
       }  
     } 
   }
@@ -115,18 +124,34 @@ export default function Home() {
       {invalido && (
         <CardErro>{messagens}</CardErro>
       )}
-      <div className=" flex flex-1 justify-center items-center sm:mt-80 mt-60 md:mt-60 z-0 relative ">
+      <div className=" flex justify-center items-center sm:mt-80 mt-80 md:mt-60 z-0 relative ">
           <p className="text-white text-center sm:text-5xl text-4xl font-semibold mx-2">Seja bem vindo!! <span className=" block mt-2 text-blue-400 sm: text-4xl">pequeno gafanhoto</span></p>
       </div>
-      <div className="flex-1 overflow-y-auto scroll-hidden z-0 space-y-8 m-2 p-4 pb-24">
+      <div className=" flex overflow-y-auto scroll-hidden flex-col z-0 space-y-8 m-2 p-4 pb-24">
         {user.map((msg, index) => (
-          <div key={index} className={`${msg.tipo === 'user'? 'max-w-[75%] bg-blue-500 flex backdrop-blur-md justify-end rounded-2xl text-xl text-amber-50 break-all whitespace-pre-wrap p-4 ': 'bg-slate-800/80 max-w-[75%] break-all whitespace-pre-wrap rounded-2xl text-xl  text-amber-50 p-4 flex justify-start'} `}>
-            {msg.texto}
-          </div>
+          <div key={index} className={`${msg.tipo == 'user'? 'flex justify-end': 'flex justify-start'}`}>
+                {msg.tipo === 'bot' && (
+                  <div className="">
+                    {img && (
+                      <Image src='/icone.png' alt="icone bot" width={70} height={30}></Image>
+                    )}
+                    {animacao && (
+                      <div className="flex items-center justify-center space-x-2 ">
+                        <span className="h-3 w-3 animate-bounce rounded-full bg-blue-50 [animation-delay: -0.3s]"></span>
+                        <span className="h-3 w-3 animate-bounce rounded-full bg-blue-50 [animation-delay: -0.15s]"></span>
+                        <span className="h-3 w-3 animate-bounce rounded-full bg-blue-50 "></span>
+                    </div>
+                    )}
+                  </div>
+              )}
+              <div className={` ${msg.tipo == 'user'? 'bg-blue-500': 'bg-slate-800/80'} max-w-[75%] p-4 rounded-2xl text-xl break-all whitespace-pre-wrap text-amber-50 `}>
+                  {msg.texto}
+              </div>
+           </div>   
         ))}
         
       </div>
-      <div className="sm:-space-x-10 -space-x-4 lg:-space-x-160 fixed sm:mb-15 mb-5 flex justify-around items-center bottom-0 w-full ">
+      <div className="sm:-space-x-10 lg:-space-x-80 fixed sm:mb-15 mb-5 flex justify-around items-center bottom-0 w-full ">
         <Input value={texto} onChange={(e) => settexto(e.target.value)}></Input>
         <Button disabled={desabilita} onClick={server} ></Button>
       </div>
