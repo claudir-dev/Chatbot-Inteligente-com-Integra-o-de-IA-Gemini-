@@ -18,8 +18,15 @@ export default function Home() {
   const chatref = useRef<HTMLDivElement>(null)
 
     type Mensagem = {
-      texto:string, tipo: 'user' | 'bot'
+      texto:string, tipo: 'user' | 'bot' | 'loading',
     }
+
+        useEffect(() => {
+        chatref.current?.scrollTo({
+          top: chatref.current.scrollHeight,
+          behavior: 'smooth'
+        })
+      },[user])
   
   const server = async (e? : React.BaseSyntheticEvent) => {
     if(e) {
@@ -49,7 +56,8 @@ export default function Home() {
         "projetos",
         "trabalhos",
         "github",
-        "ver projetos"
+        "ver projetos",
+        "portifolio "
       ],
       contato: [
         "contato",
@@ -73,13 +81,18 @@ export default function Home() {
     }
     
     const exist = DetectarIntent(texto)
+    console.log(exist)
 
     if(exist) {
       alert('ola')
     } else {
       try {
         setimg(true)
-        setanimacao(true)
+        setuser((prev) => [
+          ...prev, {
+            texto: '', tipo: 'loading', 
+          }
+        ])
         setdesabilita(true)
         const req = await fetch('http://localhost:3002/api/google', {
           method: 'POST',
@@ -90,7 +103,6 @@ export default function Home() {
         })
 
         const response = await req.json()
-        setmessagens(response.text)
         console.log(response)
 
         if(!req.ok) {
@@ -100,16 +112,17 @@ export default function Home() {
           return
         }
 
-
-        setuser((prev) => [
-          ...prev, {
-            texto: response.text, tipo: 'bot'
-          }
+          setuser((prev) => [
+          ...prev.filter(msg => msg.tipo !== 'loading'), {texto: response.text, tipo: 'bot'}
         ])
 
 
       } catch (error) {
         console.log('Erro ao chama a API do gemini', error)
+
+        setuser((prev)=> [
+          ...prev.filter(msg => msg.tipo !== 'loading')
+        ])
 
         setTimeout(() => {
           setmessagens('Erro interno na requisição para api.')
@@ -119,16 +132,8 @@ export default function Home() {
 
       } finally {
         setdesabilita(false)
-        setanimacao(false)
       }  
     }
-    
-    useEffect(() => {
-        chatref.current?.scrollTo({
-          top: chatref.current.scrollHeight,
-          behavior: 'smooth'
-        })
-      },[messagens])
 
   }
   return (
@@ -137,36 +142,45 @@ export default function Home() {
       {invalido && (
         <CardErro>{messagens}</CardErro>
       )}
-      <div className="overflow-y-auto scroll-hidden">
+      <div ref={chatref}  className="flex-1 overflow-y-auto scroll-hidden">
         <div className=" flex justify-center items-center sm:mt-80 mt-80 md:mt-60 z-0 relative  ">
             <p className="text-white text-center sm:text-5xl text-4xl font-semibold mx-2">Seja bem vindo!! <span className=" block mt-2 text-blue-400 sm: text-4xl">pequeno gafanhoto</span></p>
         </div>
-        <div ref={chatref} className="flex flex-col z-0 space-y-8 m-2 p-4 pb-24">
+        <div className="flex flex-col z-0 space-y-8 m-2 p-4 pb-24">
           {user.map((msg, index) => (
             <div key={index} className={`${msg.tipo == 'user'? 'flex justify-end': 'flex justify-start'}`}>
 
-              {msg.tipo === 'bot' && (
-                
-                    <div className={`${animacao? 'flex': ''}`}>
-                      {img && (
-                          <div>
-                          <Image src='/icone.png' alt="icone bot" width={70} height={30}></Image>
-                        </div>
-                      )}
+            
+
+
+
+              {msg.tipo === 'loading' && (
                       
-                      {animacao && (
-                        <div className="flex items-center justify-center space-x-2 ">
-                          <span className="h-3 w-3 animate-bounce duration-700 rounded-full bg-blue-50 [animation-delay:-0.3s]"></span>
-                          <span className="h-3 w-3 animate-bounce duration-700 rounded-full bg-blue-50 [animation-delay:-0.15s]"></span>
-                          <span className="h-3 w-3 animate-bounce duration-700 rounded-full bg-blue-50"></span>
-                        </div>
-                      )}
-                      
-                    </div>
+                  <div className="flex items-center justify-center space-x-2 ">
+                    <span className="h-3 w-3 animate-bounce duration-700 rounded-full bg-blue-50 [animation-delay:-0.3s]"></span>
+                    <span className="h-3 w-3 animate-bounce duration-700 rounded-full bg-blue-50 [animation-delay:-0.15s]"></span>
+                    <span className="h-3 w-3 animate-bounce duration-700 rounded-full bg-blue-50"></span>
+                  </div>
+                    
               )}
-                <div className={` ${msg.tipo == 'user'? 'bg-blue-500': 'bg-slate-800/80'} max-w-[75%] p-4 rounded-2xl text-xl break-all whitespace-pre-wrap text-amber-50 `}>
-                    {msg.texto}
+
+              {msg.tipo === 'user' && (
+                <div className="bg-blue-500 ml-auto max-w-[75%] p-4 rounded-2xl text-xl break-all whitespace-pre-wrap text-amber-50">
+                  {msg.texto}
                 </div>
+              )}
+
+              {msg.tipo === 'bot' && (
+                <div>
+                  <div>
+                    <Image src='/icone.png' alt="icone bot" width={70} height={30}></Image>
+                  </div>
+                  <div className="bg-slate-800 p-4 rounded-2xl max-w-[75%] text-xl break-all whitespace-pre-wrap text-amber-50">
+                    {msg.texto}
+                  </div>
+                </div>
+
+              )}
             </div>   
           ))}
 
