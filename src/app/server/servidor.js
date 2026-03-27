@@ -49,7 +49,7 @@ app.post('/api/google', async (req, res) => {
     }
 })
 
-let port = 3002
+const port = process.env.Port
 app.listen(port, () => {
     console.log('Servidor rodando em http://localhost:' + port)
 })
