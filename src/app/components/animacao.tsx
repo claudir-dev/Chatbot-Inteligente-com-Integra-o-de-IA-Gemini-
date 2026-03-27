@@ -8,7 +8,7 @@ export default function Carregar() {
     const frases = [
         "Sincronizando rede neural",
         "Otimizando interface",
-        "Carregando assetes"
+        "Carregando assets"
     ]
 
     useEffect(() => {
