@@ -105,7 +105,7 @@ export default function Home() {
           }
         ])
         setdesabilita(true)
-        const req = await fetch('http://localhost:3002/api/google', {
+        const req = await fetch('https://chat-bot-api-544x.onrender.com/', {
           method: 'POST',
           headers: {
             'Content-type' : 'application/json'
