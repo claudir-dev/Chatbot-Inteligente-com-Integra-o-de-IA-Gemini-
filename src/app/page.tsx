@@ -125,7 +125,7 @@ export default function Home() {
           headers: {
             'Content-Type' : 'application/json'
           },
-          body: JSON.stringify({texto})
+          body: JSON.stringify({})
         })
 
         const response = await req.json()
@@ -152,12 +152,12 @@ export default function Home() {
         setuser((prev)=> [
           ...prev.filter(msg => msg.tipo !== 'loading')
         ])
-
-        setTimeout(() => {
-          setmessagens('Erro interno na requisição para api.')
-          setinvalido(true)
+        setmessagens('Erro interno na requisição para api.')
+        setinvalido(true)
+        setTimeout(() => {  
+          setinvalido(false)
         },6000)
-        setinvalido(false)
+        
 
       } finally {
         setdesabilita(false)
