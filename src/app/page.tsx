@@ -125,7 +125,7 @@ export default function Home() {
           headers: {
             'Content-Type' : 'application/json'
           },
-          body: JSON.stringify({})
+          body: JSON.stringify({texto})
         })
 
         const response = await req.json()
@@ -171,13 +171,12 @@ export default function Home() {
     {invalido && (
       <CardErro>{messagens}</CardErro>
     )}
-    <div ref={chatref} className="flex flex-col overflow-y-auto scroll-hidden">
       {render && (
         <div className={`transition-opacity duration-700 flex justify-center items-center lg:mt-90 mt-72 md:mt-60 ${saldacao ? 'opacity-100': 'opacity-0'}`}>
           <p className="text-white text-center sm:text-5xl text-4xl font-semibold mx-2">Seja bem vindo!! <span className=" block mt-2 text-blue-400 sm: text-4xl">pequeno gafanhoto</span></p>
         </div>
       )}
-      <div className="flex flex-col space-y-8 m-2 mt-90 p-4 pb-24 ">
+      <div ref={chatref} className="flex flex-col overflow-y-auto scroll-hidden space-y-8 m-2 mt-90 p-4 pb-24 ">
         {user.map((msg, index) => (
           <div key={index} className={`${msg.tipo == 'user'? 'flex justify-end': 'flex justify-start'}`}>
 
@@ -211,7 +210,7 @@ export default function Home() {
             )}
           </div>   
         ))}
-      </div>  
+ 
       
     </div> 
       <div className="max-w-4xl lg:gap-14 lg:mb-14 mx-auto fixed mb-1 flex self-center gap-7 items-center p-4 bottom-0 ">
