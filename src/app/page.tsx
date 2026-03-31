@@ -18,6 +18,7 @@ export default function Home() {
   const [carregando, setcarregando] = useState(true)
   const [saldacao, setsaldacao] = useState(true)
   const [render, setrender] = useState(true)
+  const [rolagem, setrolagem] = useState(false)
   const [user, setuser] = useState<Mensagem[]>([])
   const chatref = useRef<HTMLDivElement>(null)
 
@@ -37,6 +38,7 @@ export default function Home() {
     if(!saldacao) {
       const timer = setTimeout(() => {
         setrender(false)
+        setrolagem(true)
       }, 700)
       return () => (clearTimeout(timer))
     } 
@@ -166,17 +168,17 @@ export default function Home() {
 
   }
   return (
-   <div className="h-svh flex flex-col">
+   <div ref={chatref} className={`h-svh flex flex-col ${rolagem? 'overflow-y-auto scroll-hidden' : ''}`}>
     <Navbar></Navbar>
     {invalido && (
       <CardErro>{messagens}</CardErro>
     )}
       {render && (
-        <div className={`transition-opacity duration-700 flex justify-center items-center lg:mt-90 mt-72 md:mt-60 ${saldacao ? 'opacity-100': 'opacity-0'}`}>
+        <div className={`transition-opacity z-0 duration-700 flex justify-center items-center lg:mt-70 mt-72 md:mt-60 ${saldacao ? 'opacity-100': 'opacity-0'}`}>
           <p className="text-white text-center sm:text-5xl text-4xl font-semibold mx-2">Seja bem vindo!! <span className=" block mt-2 text-blue-400 sm: text-4xl">pequeno gafanhoto</span></p>
         </div>
       )}
-      <div ref={chatref} className="flex flex-col overflow-y-auto scroll-hidden space-y-8 m-2 mt-90 p-4 pb-24 ">
+      <div  className=" flex-1 flex-col space-y-8 lg:mb-20 mb-10 m-2 mt-90 p-4 pb-24 ">
         {user.map((msg, index) => (
           <div key={index} className={`${msg.tipo == 'user'? 'flex justify-end': 'flex justify-start'}`}>
 
