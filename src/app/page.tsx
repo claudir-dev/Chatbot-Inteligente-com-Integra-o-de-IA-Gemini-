@@ -5,7 +5,6 @@ import Button from "./components/button"
 import Input from "./components/input";
 import CardErro from "./components/card_error";
 import Carregar from "./components/animacao";
-import { CardAudio } from "./components/card_audio";
 import { use, useEffect, useRef, useState } from "react";
 export default function Home() {
 
@@ -130,7 +129,6 @@ export default function Home() {
           body: JSON.stringify({texto})
         })
 
-        
 
         const response = await req.json()
         console.log(response)
@@ -174,9 +172,6 @@ export default function Home() {
     <Navbar></Navbar>
     {invalido && (
       <CardErro>{messagens}</CardErro>
-    )}
-    {audio && (
-      <CardAudio></CardAudio>
     )}
       {render && (
         <div className={`transition-opacity z-0 duration-700 flex justify-center items-center lg:mt-70 mt-72 md:mt-60 ${saldacao ? 'opacity-100': 'opacity-0'}`}>
