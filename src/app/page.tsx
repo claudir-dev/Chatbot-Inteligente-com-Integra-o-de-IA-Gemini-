@@ -19,7 +19,8 @@ export default function Home() {
   const [saldacao, setsaldacao] = useState(true)
   const [render, setrender] = useState(true)
   const [rolagem, setrolagem] = useState(false)
-  const [audio, setaudio] = useState(true)
+  const [audio, setaudio] = useState(false)
+  const [card, setcard] = useState(false)
   const [user, setuser] = useState<Mensagem[]>([])
   const chatref = useRef<HTMLDivElement>(null)
 
@@ -45,6 +46,19 @@ export default function Home() {
     } 
   },[saldacao])
 
+  useEffect(() => {
+    if(card) {
+      setaudio(false)
+      const inter = setTimeout(() => {
+        setaudio(true)
+      },100)
+
+      return () => clearTimeout(inter)
+    } else {
+      setaudio(false)
+    }
+  },[card])
+
   if(carregando) {
     return <Carregar/>
   }
@@ -52,8 +66,14 @@ export default function Home() {
     type Mensagem = {
       texto:string, tipo: 'user' | 'bot' | 'loading' | 'error',
     }
+
+  const MostrarCard = () => {
+    setcard(true)
+    return
+  } 
   
   const server = async (e? : React.BaseSyntheticEvent) => {
+
     if(e) {
       e.preventDefault()
     }
@@ -76,6 +96,8 @@ export default function Home() {
       }
     ])
 
+    MostrarCard()
+    
     settexto('')
 
     const intents = {
@@ -116,6 +138,7 @@ export default function Home() {
       
     } else {
       try {
+        
         setuser((prev) => [
           ...prev, {
             texto: '', tipo: 'loading', 
@@ -127,10 +150,9 @@ export default function Home() {
           headers: {
             'Content-Type' : 'application/json'
           },
-          body: JSON.stringify({texto})
+          body: JSON.stringify({})
         })
 
-        
 
         const response = await req.json()
         console.log(response)
@@ -175,9 +197,11 @@ export default function Home() {
     {invalido && (
       <CardErro>{messagens}</CardErro>
     )}
-    {audio && (
-      <CardAudio></CardAudio>
+
+    {card && (
+      <CardAudio className={`transition-all duration-500 ease-out ${audio ? 'opacity-100 translate-y-0': 'opacity-0 translate-y-5 pointer-events-none'}`}></CardAudio>
     )}
+
       {render && (
         <div className={`transition-opacity z-0 duration-700 flex justify-center items-center lg:mt-70 mt-72 md:mt-60 ${saldacao ? 'opacity-100': 'opacity-0'}`}>
           <p className="text-white text-center sm:text-5xl text-4xl font-semibold mx-2">Seja bem vindo!! <span className=" block mt-2 text-blue-400 sm: text-4xl">pequeno gafanhoto</span></p>
