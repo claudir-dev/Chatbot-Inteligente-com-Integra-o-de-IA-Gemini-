@@ -8,6 +8,7 @@ import Carregar from "./components/animacao";
 import Add from "./components/add";
 import Ativo from "./components/card_ativo";
 import Desativado from "./components/card_desativo";
+import Microfone from "./components/microfone";
 import { use, useEffect, useRef, useState } from "react";
 import { FaX } from "react-icons/fa6";
 import { constants } from "buffer";
@@ -360,9 +361,10 @@ useEffect(() => {
  
       
     </div> 
-      <div className=" max-w-4xl lg:gap-14 lg:mb-14 mx-auto fixed z-0 mb-1 flex self-center gap-7 items-center p-4 bottom-0 ">
-        <Add aoClicar={MostraCard => (setcard(true))}></Add>
+      <div className=" max-w-4xl lg:gap-8 lg:mb-14 mx-auto fixed z-0 mb-1 flex self-center gap-4 items-center bottom-5 ">
+        <Add aoClicar={() => setcard(true)}></Add>
         <Input value={texto} onChange={(e) => settexto(e.target.value)}></Input>
+        <Microfone className={` ${texto ? 'hidden' : ''}`}></Microfone>
         <Button className="lg:b-7" disabled={desabilita} onClick={server} ></Button>
       </div>
       <div className="hidden fixed self-center items-center lg:block bottom-0">
